@@ -2,11 +2,11 @@ import styled from 'styled-components'
 import { NFTModal } from './components/NFTModal';
 import { NFTCard, NftPhoto } from './components/NFTCard';
 import {useState, useEffect} from 'react'
-import { ethers } from 'ethers'
+import { ethers, utils } from 'ethers'
 import { connect } from './helpers';
 //require('dotenv').config();
 const axios = require('axios');
-const contractAddress = "0x705192021210A2C54E647E24208E9Ce4593f9f85"
+const contractAddress = "0x761465991ff8bc386866259D01108b276BcCfdf3"
 
 
 function App() {
@@ -67,9 +67,11 @@ function App() {
     const contract = new ethers.Contract(contractAddress, contractABI.abi, signer);
 
     //const message = await contract.getMessage()
-    //const bal = await contract.withdraw()
-    //setBalance(bal)
-    //console.log(message)
+    //const bal = await provider.getBalance(contractAddress)
+    // const bal = await contract.balance()
+    // const ba = ethers.utils.formatEther(bal) 
+    // setBalance(ba)
+    // console.log(ba)
    
 
     try {
@@ -79,7 +81,7 @@ function App() {
       console.log("Succesffuly minted 1 NFTS")
       return {
           success: true,
-          status: "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" + txHash
+          status: "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" + txHash,
       }
       } catch (error) {
       return {
