@@ -7,7 +7,7 @@ import { connect } from './helpers';
 //require('dotenv').config();
 const axios = require('axios');
 //const contractAddress = "0x761465991ff8bc386866259D01108b276BcCfdf3"
-const contractAddress = "0x761465991ff8bc386866259D01108b276BcCfdf3"
+const contractAddress = "0xE7caC70fB8A8d422336F105b3cf797C2821082F4"
 
 function App() {
 
