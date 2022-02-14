@@ -6,20 +6,20 @@ import { ethers, utils } from 'ethers'
 import { connect } from './helpers';
 //require('dotenv').config();
 const axios = require('axios');
+//const contractAddress = "0x761465991ff8bc386866259D01108b276BcCfdf3"
 const contractAddress = "0x761465991ff8bc386866259D01108b276BcCfdf3"
-
 
 function App() {
 
   let initialNfts = [
-    { name: "Mario", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
-    { name: "Luigi", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
-    { name: "Yoshi", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
-    { name: "Donkey Kong", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
-    { name: "Mario", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
-    { name: "Luigi", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
-    { name: "Yoshi", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
-    { name: "Donkey Kong", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"}
+    { name: "You have none, mint NOW!!", symbol: "MAV", copies: "0", image: "https://via.placeholder.com/150"},
+    // { name: "Luigi", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
+    // { name: "Yoshi", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
+    // { name: "Donkey Kong", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
+    // { name: "Mario", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
+    // { name: "Luigi", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
+    // { name: "Yoshi", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"},
+    // { name: "Donkey Kong", symbol: "MAV", copies: "10", image: "https://via.placeholder.com/150"}
   ] 
 
   const [showModal, setShowModal] = useState(false)
@@ -28,6 +28,7 @@ function App() {
   const [activeAddress, setActiveAddress] = useState("Connect Wallet")
   const contractABI = require("./Derbie.json");
   const [balance, setBalance] = useState(0);
+  const [mintButton, setMintButton] = useState("Mint Now");
 
   useEffect( () => {
 
@@ -68,17 +69,25 @@ function App() {
 
     //const message = await contract.getMessage()
     //const bal = await provider.getBalance(contractAddress)
-    // const bal = await contract.balance()
-    // const ba = ethers.utils.formatEther(bal) 
-    // setBalance(ba)
-    // console.log(ba)
+    const bal = await contract.balance()
+    const ba = ethers.utils.formatEther(bal) 
+    setBalance(ba)
+    console.log(ba)
    
 
     try {
       const options = {value: ethers.utils.parseEther("0.1")}
+      setMintButton("Minting Now, please wait")
       //console.log(ethers.utils.parseEther("0.1"))
       const txHash = await contract.mint(1, options)
       console.log("Succesffuly minted 1 NFTS")
+      const receipt = await txHash.wait();
+      if(receipt){
+        console.log(receipt)
+        setMintButton("Mint Succesfful")
+        getNfts(activeAddress)
+        setMintButton("Mint Now!")
+      }
       return {
           success: true,
           status: "✅ Check out your transaction on Etherscan: https://ropsten.etherscan.io/tx/" + txHash,
@@ -158,8 +167,11 @@ function App() {
     let numberOfNfts = (await nftCollection.tokenCount()).toNumber()
     let collectionSymbol = await nftCollection.symbol()
     let accounts = Array(numberOfNfts).fill(address)
+    console.log(accounts)
     let ids = Array.from({length: numberOfNfts}, (_, i) => i + 1)
+    console.log(`IDs: ${ids}`)
     let copies = await nftCollection.balanceOfBatch(accounts, ids)
+    console.log(`Copies: ${copies}`)
 
     let tempArray = []
     let baseUrl =""
@@ -197,9 +209,9 @@ function App() {
       <Container>
         <Title> Mavie World Collection </Title>
         <Subtitle> Probably the best NFT ever released</Subtitle>
-        <Subtitle>{balance}</Subtitle>
+        <Subtitle>Contract Eth balance: {balance}</Subtitle>
         <Button onClick={() => openNow()}> {activeAddress}</Button>
-        <MintButton onClick={() => mint()}> Mint Now</MintButton>
+        <MintButton onClick={() => mint()}> {mintButton}</MintButton>
         <Grid>
           {
             nfts.map((nft, i) =>  
